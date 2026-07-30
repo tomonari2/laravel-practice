@@ -6,23 +6,48 @@
 </head>
 <body>
 
-    <h1>掲示板一覧</h1>
+<h1>掲示板一覧</h1>
 
-    @if ($posts->isEmpty())
-        <p>投稿はありません。</p>
-    @else
-        @foreach ($posts as $post)
+<a href="{{ route('posts.create') }}">
+    新規投稿
+</a>
 
-            <hr>
+<hr>
 
-            <h2>{{ $post->title }}</h2>
+@forelse($posts as $post)
 
-            <p>{{ $post->body }}</p>
+<h2>{{ $post->title }}</h2>
 
-            <p>投稿日：{{ $post->created_at }}</p>
+<p>{{ $post->body }}</p>
 
-        @endforeach
-    @endif
+<p>{{ $post->created_at }}</p>
+
+<a href="{{ route('posts.edit',$post) }}">
+    編集
+</a>
+
+<form
+    action="{{ route('posts.destroy',$post) }}"
+    method="POST"
+>
+
+    @csrf
+
+    @method('DELETE')
+
+    <button>
+        削除
+    </button>
+
+</form>
+
+<hr>
+
+@empty
+
+<p>投稿はありません。</p>
+
+@endforelse
 
 </body>
 </html>
