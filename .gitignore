@@ -1,0 +1,22 @@
+# Laravel
+src/.env
+src/vendor/
+src/node_modules/
+
+# Laravel cache / logs
+src/storage/*.key
+src/storage/logs/*
+src/storage/framework/cache/*
+src/storage/framework/sessions/*
+src/storage/framework/views/*
+
+# Docker SSL
+nginx/certs/*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
