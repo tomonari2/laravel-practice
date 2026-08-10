@@ -1,34 +1,79 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>投稿作成</title>
-</head>
-<body>
+@extends('layouts.app')
 
-<h1>投稿作成</h1>
+@section('title', '新規投稿')
+
+@section('content')
+
+<h2>新規投稿</h2>
+
+@if ($errors->any())
+    <div>
+        <p>入力内容を確認してください。</p>
+
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <form action="{{ route('posts.store') }}" method="POST">
 
     @csrf
 
-    <p>タイトル</p>
+    <div>
+        <label for="category_id">
+            カテゴリー
+        </label>
 
-    <input
-        type="text"
-        name="title"
-        value="{{ old('title') }}"
-    >
+        <select name="category_id" id="category_id">
+            <option value="">
+                選択してください
+            </option>
 
-    <p>本文</p>
+            @foreach ($categories as $category)
+                <option
+                    value="{{ $category->id }}"
+                    @selected(old('category_id') == $category->id)
+                >
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
-    <textarea
-        name="body"
-        cols="40"
-        rows="10"
-    >{{ old('body') }}</textarea>
+    <br>
 
-    <br><br>
+    <div>
+        <label for="title">
+            タイトル
+        </label>
+
+        <input
+            type="text"
+            name="title"
+            id="title"
+            value="{{ old('title') }}"
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="body">
+            本文
+        </label>
+
+        <textarea
+            name="body"
+            id="body"
+            rows="10"
+            cols="60"
+        >{{ old('body') }}</textarea>
+    </div>
+
+    <br>
 
     <button type="submit">
         投稿する
@@ -39,8 +84,7 @@
 <br>
 
 <a href="{{ route('posts.index') }}">
-    一覧へ戻る
+    投稿一覧に戻る
 </a>
 
-</body>
-</html>
+@endsection

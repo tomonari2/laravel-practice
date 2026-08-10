@@ -1,53 +1,77 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>掲示板</title>
-</head>
-<body>
+@extends('layouts.app')
 
-<h1>掲示板一覧</h1>
+@section('title', '投稿一覧')
 
-<a href="{{ route('posts.create') }}">
-    新規投稿
-</a>
+@section('content')
 
-<hr>
+<h2>投稿一覧</h2>
 
-@forelse($posts as $post)
+@if(session('success'))
+    <p>{{ session('success') }}</p>
+@endif
 
-<h2>{{ $post->title }}</h2>
+@if($posts->isEmpty())
 
-<p>{{ $post->body }}</p>
+    <p>投稿はありません。</p>
 
-<p>{{ $post->created_at }}</p>
+@else
 
-<a href="{{ route('posts.edit',$post) }}">
-    編集
-</a>
+    @foreach($posts as $post)
 
-<form
-    action="{{ route('posts.destroy',$post) }}"
-    method="POST"
->
+        <article>
 
-    @csrf
+            <h3>
+                <a href="{{ route('posts.show', $post) }}">
+                    {{ $post->title }}
+                </a>
+            </h3>
 
-    @method('DELETE')
+            <p>
+                カテゴリー：
+                {{ $post->category->name }}
+            </p>
 
-    <button>
-        削除
-    </button>
+            <p>
+                投稿者：
+                {{ $post->user->name }}
+            </p>
 
-</form>
+            <p>
+                {{ $post->body }}
+            </p>
 
-<hr>
+            <small>
+                {{ $post->created_at->format('Y年m月d日 H:i') }}
+            </small>
 
-@empty
+            <p>
+                <a href="{{ route('posts.show', $post) }}">
+                    詳細
+                </a>
 
-<p>投稿はありません。</p>
+                <a href="{{ route('posts.edit', $post) }}">
+                    編集
+                </a>
+            </p>
 
-@endforelse
+            <form
+                action="{{ route('posts.destroy', $post) }}"
+                method="POST"
+            >
+                @csrf
+                @method('DELETE')
 
-</body>
-</html>
+                <button type="submit">
+                    削除
+                </button>
+            </form>
+
+        </article>
+
+        <hr>
+
+    @endforeach
+
+@endif
+
+@endsection

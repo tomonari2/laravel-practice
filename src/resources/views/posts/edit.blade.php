@@ -1,36 +1,81 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>編集</title>
-</head>
-<body>
+@extends('layouts.app')
 
-<h1>編集</h1>
+@section('title', '投稿編集')
 
-<form action="{{ route('posts.update',$post) }}" method="POST">
+@section('content')
+
+<h2>投稿編集</h2>
+
+@if ($errors->any())
+    <div>
+        <p>入力内容を確認してください。</p>
+
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form
+    action="{{ route('posts.update', $post) }}"
+    method="POST"
+>
 
     @csrf
-
     @method('PUT')
 
-    <p>タイトル</p>
+    <div>
+        <label for="category_id">
+            カテゴリー
+        </label>
 
-    <input
-        type="text"
-        name="title"
-        value="{{ old('title',$post->title) }}"
-    >
+        <select name="category_id" id="category_id">
 
-    <p>本文</p>
+            @foreach ($categories as $category)
+                <option
+                    value="{{ $category->id }}"
+                    @selected(old('category_id', $post->category_id) == $category->id)
+                >
+                    {{ $category->name }}
+                </option>
+            @endforeach
 
-    <textarea
-        name="body"
-        cols="40"
-        rows="10"
-    >{{ old('body',$post->body) }}</textarea>
+        </select>
+    </div>
 
-    <br><br>
+    <br>
+
+    <div>
+        <label for="title">
+            タイトル
+        </label>
+
+        <input
+            type="text"
+            name="title"
+            id="title"
+            value="{{ old('title', $post->title) }}"
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="body">
+            本文
+        </label>
+
+        <textarea
+            name="body"
+            id="body"
+            rows="10"
+            cols="60"
+        >{{ old('body', $post->body) }}</textarea>
+    </div>
+
+    <br>
 
     <button type="submit">
         更新する
@@ -40,9 +85,8 @@
 
 <br>
 
-<a href="{{ route('posts.index') }}">
-    一覧へ戻る
+<a href="{{ route('posts.show', $post) }}">
+    詳細に戻る
 </a>
 
-</body>
-</html>
+@endsection

@@ -2,102 +2,107 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * 投稿一覧
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::with(['user', 'category'])
+            ->latest()
+            ->get();
 
         return view('posts.index', compact('posts'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * 新規投稿画面
      */
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::orderBy('name')->get();
+
+        return view('posts.create', compact('categories'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 投稿保存
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'body' => 'required',
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'title' => ['required', 'max:255'],
+            'body' => ['required'],
         ]);
 
-        Post::create($request->only('title', 'body'));
+        // 認証実装後は auth()->id() を使用する
+        // 現在は仮でユーザーIDを指定する必要があります
+        $validated['user_id'] = auth()->id();
 
-        return redirect('/posts');
+        Post::create($validated);
+
+        return redirect()
+            ->route('posts.index')
+            ->with('success', '投稿しました。');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * 投稿詳細
      */
     public function show(Post $post)
     {
-        //
+        $post->load([
+            'user',
+            'category',
+            'comments.user',
+        ]);
+
+        return view('posts.show', compact('post'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * 投稿編集画面
      */
     public function edit(Post $post)
     {
-        return view('posts.edit', compact('post'));
+        $categories = Category::orderBy('name')->get();
+
+        return view('posts.edit', compact('post', 'categories'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * 投稿更新
      */
     public function update(Request $request, Post $post)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'body' => 'required',
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'title' => ['required', 'max:255'],
+            'body' => ['required'],
         ]);
 
-        $post->update($request->only('title', 'body'));
+        $post->update($validated);
 
-        return redirect('/posts');
+        return redirect()
+            ->route('posts.show', $post)
+            ->with('success', '投稿を更新しました。');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * 投稿削除
      */
     public function destroy(Post $post)
     {
         $post->delete();
 
-        return redirect('/posts');
+        return redirect()
+            ->route('posts.index')
+            ->with('success', '投稿を削除しました。');
     }
 }
