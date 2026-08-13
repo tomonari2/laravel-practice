@@ -23,4 +23,7 @@ Route::get('/', function () {
 Route::get('/auth/line', [LineAuthController::class, 'redirect'])
     ->name('line.redirect');
 
+Route::get('/auth/line/callback', [LineAuthController::class, 'callback'])
+    ->name('line.callback');
+
 Route::resource('posts', PostController::class);

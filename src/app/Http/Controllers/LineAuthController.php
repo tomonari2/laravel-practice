@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class LineAuthController extends Controller
 {
@@ -27,5 +29,38 @@ class LineAuthController extends Controller
         return redirect(
             'https://access.line.me/oauth2/v2.1/authorize?' . $query
         );
+    }
+
+    /**
+     * LINEからのコールバック
+     */
+    public function callback(Request $request)
+    {
+        // LINE側でエラーになった場合
+        if ($request->has('error')) {
+            return redirect('/')
+                ->with('error', $request->error_description);
+        }
+
+        // stateを取得
+        $state = $request->state;
+
+        // セッションに保存していたstateと比較
+        if (!$state || !hash_equals(
+            session('line_login_state', ''),
+            $state
+        )) {
+            abort(403, 'Invalid state.');
+        }
+
+        // 認可コードを取得
+        $code = $request->code;
+
+        if (!$code) {
+            abort(400, 'Authorization code is missing.');
+        }
+
+        // 確認用
+        dd($code);
     }
 }
