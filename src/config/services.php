@@ -33,6 +33,7 @@ return [
 
     'line' => [
         'channel_id' => env('LINE_CHANNEL_ID'),
+        'channel_secret' => env('LINE_CHANNEL_SECRET'),
         'callback_url' => env('LINE_CALLBACK_URL'),
     ],
 ];

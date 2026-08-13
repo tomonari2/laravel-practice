@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Infrastructure\Line\LineApiService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -34,7 +35,7 @@ class LineAuthController extends Controller
     /**
      * LINEからのコールバック
      */
-    public function callback(Request $request)
+    public function callback(Request $request, LineApiService $lineApiService)
     {
         // LINE側でエラーになった場合
         if ($request->has('error')) {
@@ -60,7 +61,10 @@ class LineAuthController extends Controller
             abort(400, 'Authorization code is missing.');
         }
 
+        // 認可コードからアクセストークンを取得
+        $token = $lineApiService->getAccessToken($code);
+
         // 確認用
-        dd($code);
+        dd($token);
     }
 }
