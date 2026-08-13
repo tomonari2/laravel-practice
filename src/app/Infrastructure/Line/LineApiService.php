@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Infrastructure\Line;
+
 use Illuminate\Support\Facades\Http;
 
 class LineApiService
@@ -17,6 +18,16 @@ class LineApiService
                 'client_secret' => config('services.line.channel_secret'),
             ]
         );
+
+        $response->throw();
+
+        return $response->json();
+    }
+
+    public function getUserInfo(string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
+            ->get('https://api.line.me/oauth2/v2.1/userinfo');
 
         $response->throw();
 

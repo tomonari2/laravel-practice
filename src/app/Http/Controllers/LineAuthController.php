@@ -64,7 +64,10 @@ class LineAuthController extends Controller
         // 認可コードからアクセストークンを取得
         $token = $lineApiService->getAccessToken($code);
 
-        // 確認用
-        dd($token);
+        $userInfo = $lineApiService->getUserInfo(
+            $token['access_token']
+        );
+
+        dd($userInfo);
     }
 }
