@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\LineAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +19,8 @@ use App\Http\Controllers\PostController;
 Route::get('/', function () {
     return redirect('/posts');
 });
+
+Route::get('/auth/line', [LineAuthController::class, 'redirect'])
+    ->name('line.redirect');
 
 Route::resource('posts', PostController::class);
