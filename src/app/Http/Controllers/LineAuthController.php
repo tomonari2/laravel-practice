@@ -69,9 +69,14 @@ class LineAuthController extends Controller
             $token['access_token']
         );
 
-        $user = User::firstOrCreate([
-            'sub' => $userInfo['sub'],
-        ]);
+        $user = User::firstOrCreate(
+            [
+                'sub' => $userInfo['sub'],
+            ],
+            [
+                'name' => $userInfo['name'],
+            ]
+        );
 
         // Laravelの認証セッションに保存
         auth()->login($user);
