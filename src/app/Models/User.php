@@ -14,6 +14,7 @@ class User extends Authenticatable
     
     protected $fillable = [
         'sub',
+        'name',
     ];
     /** * 投稿 */ 
     public function posts()
