@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Infrastructure\Line\LineApiService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class LineAuthController extends Controller
 {
@@ -68,6 +69,16 @@ class LineAuthController extends Controller
             $token['access_token']
         );
 
-        dd($userInfo);
+        $user = User::firstOrCreate([
+            'sub' => $userInfo['sub'],
+        ]);
+
+        // Laravelの認証セッションに保存
+        auth()->login($user);
+
+        // セッションIDを再生成
+        $request->session()->regenerate();
+
+        return redirect('/');
     }
 }
