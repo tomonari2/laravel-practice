@@ -26,4 +26,14 @@ Route::get('/auth/line', [LineAuthController::class, 'redirect'])
 Route::get('/auth/line/callback', [LineAuthController::class, 'callback'])
     ->name('line.callback');
 
-Route::resource('posts', PostController::class);
+Route::get('/posts/create', [PostController::class, 'create'])
+    ->name('posts.create')
+    ->middleware('line.auth');
+// 誰でも見られる
+Route::resource('posts', PostController::class)
+    ->only(['index', 'show']);
+
+// ログイン必須
+Route::resource('posts', PostController::class)
+    ->only([ 'store', 'edit', 'update', 'destroy'])
+    ->middleware('line.auth');
