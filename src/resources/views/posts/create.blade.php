@@ -18,7 +18,7 @@
     </div>
 @endif
 
-<form action="{{ route('posts.store') }}" method="POST">
+<form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
 
     @csrf
 
@@ -41,6 +41,16 @@
                 </option>
             @endforeach
         </select>
+
+      <div>
+        <label for="image">画像</label>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          accept="image/*"
+        >
+      </div>
     </div>
 
     <br>

@@ -39,11 +39,20 @@ class PostController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'title' => ['required', 'max:255'],
             'body' => ['required'],
+            'image' => ['nullable', 'image', 'max:5120'],
         ]);
 
         // 認証実装後は auth()->id() を使用する
         // 現在は仮でユーザーIDを指定する必要があります
         $validated['user_id'] = auth()->id();
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+        }
+
+        $validated['image_path'] = $imagePath;
 
         Post::create($validated);
 
