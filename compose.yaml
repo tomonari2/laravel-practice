@@ -3,6 +3,7 @@ services:
     build: ./php
     volumes:
       - ./src:/var/www
+      - /var/www/vendor
 
   nginx:
     build: ./nginx
@@ -10,7 +11,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./src:/var/www
+      - ./src/public:/var/www/public
+      - ./src/storage/app/public:/var/www/storage/app/public
       - ./nginx/certs:/etc/nginx/certs
 
   mariadb:
