@@ -6,6 +6,11 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 class PostController extends Controller
 {
     /**
@@ -49,8 +54,21 @@ class PostController extends Controller
         $imagePath = null;
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+            $manager = new ImageManager(Driver::class);
+
+            $image = $manager->read($request->file('image'));
+
+            $image->scaleDown(width: 500, height: 500);
+
+            $imagePath = 'posts/' . Str::random(40) . '.jpg';
+
+            Storage::disk('public')->put(
+                $imagePath,
+                $image->toJpeg()
+            );
         }
+
+
 
         $validated['image_path'] = $imagePath;
 
